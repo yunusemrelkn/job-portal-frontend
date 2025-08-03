@@ -1,23 +1,122 @@
+// src/types/index.ts - Updated with Hiring Workflow Types
 import App from "../App";
 
-// src/types/index.ts - Updated with proper role handling
+// User role enum to match backend
+export enum UserRole {
+  Admin = 0,
+  Employer = 1,
+  JobSeeker = 2
+}
+
+// Application status enum to match backend
+export enum ApplicationStatus {
+  Pending = 0,
+  Accepted = 1,
+  Rejected = 2
+}
+
+// Employment information interface
+export interface EmploymentInfo {
+  companyName: string;
+  departmentName: string;
+  companyLocation?: string;
+  startDate: string;
+}
+
+// Updated User interface with employment information
 export interface User {
   userId: number;
   name: string;
   surname: string;
   email: string;
   phone?: string;
-  role: UserRole; // Changed to use enum
+  role: UserRole;
   companyId?: number;
   companyName?: string;
   createdAt: string;
+  currentEmployment?: EmploymentInfo; // New field for hired job seekers
 }
 
-// Define the enum to match backend
-export enum UserRole {
-  Admin = 0,
-  Employer = 1,
-  JobSeeker = 2
+// Updated Job interface with filled status
+export interface Job {
+  jobId: number;
+  title: string;
+  description: string;
+  location?: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  companyName: string;
+  departmentName: string;
+  createdAt: string;
+  skills: string[];
+  isFavorited: boolean;
+  hasApplied: boolean;
+  isFilled?: boolean; // New field to track if job is filled
+}
+
+// CV interface
+export interface CV {
+  cvId: number;
+  userId: number;
+  summary?: string;
+  experienceYears?: number;
+  educationLevel?: string;
+  skillsText?: string;
+  createdAt: string;
+  skills: string[];
+}
+
+// Application interface
+export interface Application {
+  applicationId: number;
+  userId: number;
+  applicantName?: string;
+  applicantEmail?: string;
+  jobId: number;
+  jobTitle?: string;
+  companyName?: string;
+  status: 'Pending' | 'Accepted' | 'Rejected';
+  createdAt: string;
+  cv?: CV;
+}
+
+// Job suggestion interface for recommendation system
+export interface JobSuggestion extends Job {
+  matchScore: number;
+  matchingSkills: string[];
+  totalSkillsRequired: number;
+  matchPercentage: number;
+  reasonForSuggestion: string;
+}
+
+// Skill match interface for analysis
+export interface SkillMatch {
+  skill: string;
+  inCV: boolean;
+  inJob: boolean;
+}
+
+// Skill interface
+export interface Skill {
+  skillId: number;
+  name: string;
+}
+
+// Department interface
+export interface Department {
+  departmentId: number;
+  name: string;
+}
+
+// Company interface
+export interface Company {
+  companyId: number;
+  name: string;
+  description?: string;
+  location?: string;
+  sectorName: string;
+  employeeCount: number;
+  jobCount: number;
 }
 
 // Helper function to convert role enum to string
@@ -54,68 +153,10 @@ export const getRoleEnum = (roleString: string): UserRole => {
   }
 };
 
-export interface JobSuggestion extends Job {
-  matchScore: number;
-  matchingSkills: string[];
-  totalSkillsRequired: number;
-  matchPercentage: number;
-  reasonForSuggestion: string;
-}
-
-export interface SkillMatch {
-  skill: string;
-  inCV: boolean;
-  inJob: boolean;
-}
-
-export interface Job {
-  jobId: number;
-  title: string;
-  description: string;
-  location?: string;
-  salaryMin?: number;
-  salaryMax?: number;
-  companyName: string;
-  departmentName: string;
-  createdAt: string;
-  skills: string[];
-  isFavorited: boolean;
-  hasApplied: boolean;
-}
-
-export interface CV {
-  cvId: number;
-  userId: number;
-  summary?: string;
-  experienceYears?: number;
-  educationLevel?: string;
-  skillsText?: string;
-  createdAt: string;
-  skills: string[];
-}
-
-export interface Application {
-  applicationId: number;
-  userId: number;
-  applicantName?: string;
-  applicantEmail?: string;
-  jobId: number;
-  jobTitle?: string;
-  companyName?: string;
-  status: 'Pending' | 'Accepted' | 'Rejected';
-  createdAt: string;
-  cv?: CV;
-}
-
-export enum ApplicationStatus {
-  Pending = 0,
-  Accepted = 1,
-  Rejected = 2
-}
-
-export const getStatusString = (status: ApplicationStatus | string | number): string => {
+// Helper function to convert application status enum to string
+export const getStatusString = (status: ApplicationStatus | string | number): 'Pending' | 'Accepted' | 'Rejected' => {
   if (typeof status === 'string') {
-    return status;
+    return status as 'Pending' | 'Accepted' | 'Rejected';
   }
   
   if (typeof status === 'number') {
@@ -123,7 +164,7 @@ export const getStatusString = (status: ApplicationStatus | string | number): st
       case 0: return 'Pending';
       case 1: return 'Accepted';
       case 2: return 'Rejected';
-      default: return 'Unknown';
+      default: return 'Pending';
     }
   }
   
@@ -132,11 +173,11 @@ export const getStatusString = (status: ApplicationStatus | string | number): st
     case ApplicationStatus.Pending: return 'Pending';
     case ApplicationStatus.Accepted: return 'Accepted';
     case ApplicationStatus.Rejected: return 'Rejected';
-    default: return 'Unknown';
+    default: return 'Pending';
   }
 };
 
-// Helper function to convert string to role enum
+// Helper function to convert string to application status enum
 export const getStatusEnum = (statusString: string): ApplicationStatus => {
   switch (statusString.toLowerCase()) {
     case 'pending': return ApplicationStatus.Pending;
@@ -145,18 +186,3 @@ export const getStatusEnum = (statusString: string): ApplicationStatus => {
     default: return ApplicationStatus.Pending;
   }
 };
-
-export interface Skill {
-  skillId: number;
-  name: string;
-}
-
-export interface Company {
-  companyId: number;
-  name: string;
-  description?: string;
-  location?: string;
-  sectorName: string;
-  employeeCount: number;
-  jobCount: number;
-}

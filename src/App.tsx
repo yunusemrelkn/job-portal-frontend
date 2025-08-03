@@ -13,6 +13,8 @@ import SuggestionsPage from './pages/SuggestionsPage';
 import ProfilePage from './pages/ProfilePage';
 import { getRoleString } from './types';
 import './App.css';
+import EmployerJobsPage from './pages/employer/EmployerJobsPage';
+import EmployerApplicationsPage from './pages/employer/EmployerApplicationsPage';
 
 // Loading Component
 const LoadingSpinner: React.FC = () => (
@@ -170,25 +172,19 @@ const App: React.FC = () => {
               path="/employer/jobs" 
               element={
                 <ProtectedRoute allowedRoles={['Employer']}>
-                  <div style={{ textAlign: 'center', padding: '3rem' }}>
-                    <h2>Employer Jobs Dashboard</h2>
-                    <p>Coming soon - manage your job postings here</p>
-                  </div>
+                  <EmployerJobsPage />
                 </ProtectedRoute>
               } 
             />
-            
+
             <Route 
               path="/employer/applications" 
               element={
                 <ProtectedRoute allowedRoles={['Employer']}>
-                  <div style={{ textAlign: 'center', padding: '3rem' }}>
-                    <h2>Employer Applications Dashboard</h2>
-                    <p>Coming soon - manage job applications here</p>
-                  </div>
+                  <EmployerApplicationsPage />
                 </ProtectedRoute>
               } 
-            />
+            />  
             
             {/* Admin routes */}
             <Route 
